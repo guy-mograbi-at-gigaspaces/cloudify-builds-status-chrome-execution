@@ -1,0 +1,50 @@
+<!doctype html>
+<html ng-csp ng-app="myoptions">
+<head>
+    <!-- build:css styles/vendor.css -->
+    <!-- bower:css -->
+    <!-- endbower -->
+    <!-- endbuild -->
+    <!-- build:css styles/main.css -->
+    <link href="styles/main.css" rel="stylesheet">
+    <!-- endbuild -->
+</head>
+<body id="options" ng-controller="MyOptionsCtrl as options">
+<h1>'Allo, 'Allo!</h1>
+
+<div class="status">{{options.status}}</div>
+
+<form ng-submit="options.save($event)">
+
+    <div>Name: <input ng-model="options.details.name"/></div>
+
+
+
+
+    <div ng-repeat="repo in options.details.repositories">
+        <div>Slug (owner/name) : <input ng-model="repo.slug"></div>
+        <!--<div>Name : <input ng-model="repo.name"></div>-->
+        <!--<div>Name : <input ng-model="repo.name"></div>-->
+        <button ng-click="options.details.repositories.splice(options.details.repositories.indexOf(repo),1)">Remove Repository</button>
+    </div>
+
+    <input type="submit"/>
+
+</form>
+
+<button ng-click="options.addRepository()">Add Repository</button>
+
+
+<!-- build:js scripts/options_vendor.js -->
+<!-- bower:js -->
+<script src="bower_components/jquery/dist/jquery.js"></script>
+<script src="bower_components/lodash/lodash.js"></script>
+<script src="bower_components/angular/angular.js"></script>
+<!-- endbower -->
+<!-- endbuild -->
+
+<!-- build:js scripts/options.js -->
+<script src="scripts/options.js"></script>
+<!-- endbuild -->
+</body>
+</html>

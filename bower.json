@@ -1,0 +1,10 @@
+{
+  "name": "my-first-chrome-extension",
+  "version": "0.0.0",
+  "dependencies": {
+    "lodash": "~3.9.3",
+    "angular": "~1.4.0",
+    "jquery": "~2.1.4"
+  },
+  "devDependencies": {}
+}
