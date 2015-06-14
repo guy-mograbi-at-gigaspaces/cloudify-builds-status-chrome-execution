@@ -3,6 +3,7 @@ Cloudify Build Chrome Extension
 
 Brings you the cloudify-build-status website on your chrome https://github.com/cloudify-cosmo/cloudify-build-dashboard
 
+![](https://raw.githubusercontent.com/guy-mograbi-at-gigaspaces/cloudify-builds-status-chrome-execution/master/docs/images/ext_screenshot.png)
 
 How to install
 ---------------
