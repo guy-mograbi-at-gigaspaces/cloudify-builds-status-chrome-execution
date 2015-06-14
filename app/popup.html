@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <!-- build:css styles/vendor.css -->
+      <link href="bower_components/materialize/dist/css/materialize.css" rel="stylesheet"/>
     <!-- bower:css -->
     <!-- endbower -->
     <!-- endbuild -->
@@ -10,10 +11,10 @@
     <link href="styles/main.css" rel="stylesheet">
     <!-- endbuild -->
   </head>
-  <body id="popup">
+  <body id="popup"  class="grey darken-4">
 
     <div ng-controller="TravisCtrl">
-    <div id="header">
+    <div id="header" class="light-blue darken-4">
         Cloudify's Build Dashboard
         <span>Updated at: {{ updatedAt }}</span>
     </div>

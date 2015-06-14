@@ -18,7 +18,8 @@ module.exports = function (grunt) {
     // Configurable paths
     var config = {
         app: 'app',
-        dist: 'dist'
+        dist: 'dist',
+        tmp: '.tmp'
     };
 
     grunt.initConfig({
@@ -46,8 +47,12 @@ module.exports = function (grunt) {
                 files: [ 'app/**/*'],
                 tasks: ['build']
             },
+            sass:{
+                files: ['<%= config.app %>/styles/{,*/}*.scss'],
+                tasks: ['sass']
+            },
             styles: {
-                files: ['<%= config.app %>/styles/{,*/}*.css'],
+                files: ['<%= config.tmp %>/styles/{,*/}*.css'],
                 tasks: [],
                 options: {
                     livereload: '<%= connect.options.livereload %>'
@@ -78,7 +83,8 @@ module.exports = function (grunt) {
                 options: {
                     open: false,
                     base: [
-                        '<%= config.app %>'
+                        '<%= config.app %>',
+                        '<%= config.tmp %>'
                     ]
                 }
             },
@@ -87,7 +93,8 @@ module.exports = function (grunt) {
                     open: false,
                     base: [
                         'test',
-                        '<%= config.app %>'
+                        '<%= config.app %>',
+                        '<%= config.tmp %>'
                     ]
                 }
             }
@@ -107,6 +114,13 @@ module.exports = function (grunt) {
             }
         },
 
+        sass:{
+            main: {
+                files: {
+                    '<%= config.tmp %>/styles/main.css': '<%= config.app %>/styles/main.scss'
+                }
+            }
+        },
         // Make sure code styles are up to par and there are no obvious mistakes
         jshint: {
             options: {
@@ -243,8 +257,22 @@ module.exports = function (grunt) {
                         '{,*/}*.html',
                         'styles/{,*/}*.css',
                         'styles/fonts/{,*/}*.*',
-                        '_locales/{,*/}*.json',
+                        '_locales/{,*/}*.json'
                     ]
+                },{
+                    expand: true,
+                    dot: true,
+                    cwd: '<%= config.tmp %>',
+                    dest: '<%= config.dist %>',
+                    src: [
+                        'styles/{,*/}*.css'
+                    ]
+                },{
+                    expand:true,
+                    dot:true,
+                    cwd: '<%= config.app %>/bower_components/materialize/dist',
+                    dest: '<%=config.dist %>',
+                    src: ['font/**/*']
                 }]
             }
         },
@@ -283,7 +311,7 @@ module.exports = function (grunt) {
                 options: {
                     archive: function () {
                         var manifest = grunt.file.readJSON('app/manifest.json');
-                        return 'package/my first chrome extension-' + manifest.version + '.zip';
+                        return 'package/my-first-chrome-extension-' + manifest.version + '.zip';
                     }
                 },
                 files: [{
@@ -296,12 +324,17 @@ module.exports = function (grunt) {
         }
     });
 
+    grunt.registerTask('watch:basic', function () {
+        //console.log(grunt.config.data.watch);
+        delete grunt.config.data.watch.make;
+        grunt.task.run('watch');
+    });
     grunt.registerTask('debug', function () {
         grunt.task.run([
             'jshint',
             'concurrent:chrome',
             'connect:chrome',
-            'watch'
+            'watch:basic'
         ]);
     });
 
@@ -314,6 +347,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('build', [
         'clean:dist',
+        'sass',
         'chromeManifest:dist',
         'useminPrepare',
         'concurrent:dist',

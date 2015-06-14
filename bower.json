@@ -4,7 +4,8 @@
   "dependencies": {
     "lodash": "~3.9.3",
     "angular": "~1.4.0",
-    "jquery": "~2.1.4"
+    "jquery": "~2.1.4",
+    "materialize": "~0.96.1"
   },
   "devDependencies": {}
 }

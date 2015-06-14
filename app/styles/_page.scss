@@ -1,0 +1,129 @@
+$HEADER_BACKGROUND:#1565c0;
+#popup {
+    font-family: Helvetica, sans-serif;
+    backgound-color:$HEADER_BACKGROUND;
+    color: #ffffff;
+    margin: 6px;
+    width:500px;
+
+    #header {
+
+        padding: 10px;
+        padding-left: 20px;
+        padding-right: 20px;
+        font-weight: bold;
+        font-size: 16px;
+        span {
+            float: right;
+        }
+    }
+    #wrapper {
+        margin-top: 10px;
+        border-bottom: 2px solid $HEADER_BACKGROUND;
+        padding-bottom: 10px;
+        min-height: 40px;
+    }
+
+
+    #builds {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid $HEADER_BACKGROUND;
+        min-height: 40px;
+    }
+
+    #disabled {
+        padding-top: 10px;
+        margin-top: 2px;
+
+    }
+
+    span.branch {
+        float: right;
+        color: #ffffff;
+        background: $HEADER_BACKGROUND;
+        font-size: 12px;
+        font-weight: bold;
+        padding: 3px;
+        padding-bottom: 4px;
+        padding-top: 4px;
+        width: 44px;
+        text-align: center;
+        margin-top: 4px;
+    }
+
+    div.report {
+        width: 243px;
+        margin-left:3px;
+        display: inline-block;
+        font-size: 14px;
+//        background: #C0C0C0;
+//        border: 1px solid black;
+        margin-top:-5px;
+        line-height:0;
+        a {
+            line-height:16px;
+            padding-left:10px;
+        }
+        &.failed {
+            background: #ef5350;
+        }
+        &.started {
+            background:#ffeb3b ;
+            div {
+                visibility: visible;
+            }
+        }
+        &.created {
+            background: #FF9900;
+            div {
+                font-size: 14px;
+                visibility: visible;
+
+            }
+        }
+        &.finished {
+            background:#66bb6a ;
+        }
+        &.uninitialized {
+            border: 1px dashed gray;
+            background: #000000;
+            color: #ffffff;
+            a {
+                color: #666666;
+            }
+
+        }
+
+        div {
+            color: #000000;
+            text-align: left;
+            font-size: 14px;
+            position: relative;
+            top: 10px;
+            left: 12px;
+            visibility: hidden;
+        }
+    }
+
+    a {
+        color: #000000;
+        text-decoration: none;
+    }
+
+    div.disabled {
+        background: #333333;
+        color: #b3b3b3;
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
+
+    #status .status{ background-color:#CECECE; padding:10px; }
+
+}
+
+
+
+
+
+

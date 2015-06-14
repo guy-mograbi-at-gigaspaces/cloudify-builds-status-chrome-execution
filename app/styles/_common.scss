@@ -1,0 +1,45 @@
+
+
+.clearfix{
+    &:before, &:after {
+        content: " ";
+        display: table;
+    }
+
+    &:after {
+        clear: both;
+    }
+}
+
+
+.form-field{
+    height: 64px;
+    margin-bottom:8px;
+    border-bottom:1px solid #cecece;
+//    background-color: lightblue;
+    .label {
+        margin-top:16px;
+//        background: lightpink;
+        height:16px;
+        color: #9a9a9a;
+    }
+    .input{
+        margin-top:8px;
+//        background:lightpink;
+        height:16px;
+        input[type]{
+            height:16px;
+            width:400px;
+            font-size:14px;
+            line-height:16px;
+            margin:0;
+            padding:0;
+            border:none;
+            &:focus, &:hover, &:active{
+                &, &:before, &:after {
+                    border: none;
+                }
+            }
+        }
+    }
+}

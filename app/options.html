@@ -1,39 +1,107 @@
 <!doctype html>
 <html ng-csp ng-app="myoptions">
 <head>
+
+
     <!-- build:css styles/vendor.css -->
+    <link href="bower_components/materialize/dist/css/materialize.css" rel="stylesheet"/>
+    <link href="bower_components/angular/angular-csp.css" rel="stylesheet"/>
     <!-- bower:css -->
     <!-- endbower -->
     <!-- endbuild -->
-    <!-- build:css styles/main.css -->
+    <!-- build:css({.tmp,app}) styles/main.css -->
     <link href="styles/main.css" rel="stylesheet">
     <!-- endbuild -->
 </head>
 <body id="options" ng-controller="MyOptionsCtrl as options">
-<h1>'Allo, 'Allo!</h1>
 
-<div class="status">{{options.status}}</div>
+<div>
+    <div class="row">
+        <div class="col s3 teal lighten-1 left card-panel white-text">Cloudify Build Status Options</div>
+    </div>
+
+    <div ng-show="!!options.showStatus()" class="status-panel" >
+<div class="status card-panel right" >
+    <div ng-show="options.statusMessage">
+        {{options.statusMessage}}
+    </div>
+    <div class="preloader-wrapper big active" ng-show="options.statusThinking">
+        <div class="spinner-layer spinner-blue-only">
+            <div class="circle-clipper left">
+                <div class="circle"></div>
+            </div><div class="gap-patch">
+            <div class="circle"></div>
+        </div><div class="circle-clipper right">
+            <div class="circle"></div>
+        </div>
+        </div>
+    </div>
+</div>
+    </div>
+
+
 
 <form ng-submit="options.save($event)">
 
-    <div>Name: <input ng-model="options.details.name"/></div>
+    <div class="row">
+        <div class="card-panel col s3 teal lighten-1 badge white-text left"><i class="mdi-action-lock-open left"></i>Credentials</div>
 
+        <div class="col s5 offset-s1">
+            <div class="form-field">
+                <div class="label">Name</div>
+                <div class="input">
+                    <input id="name" title="name" type="text" ng-model="options.details.name"/>
+                </div>
+            </div>
 
-
-
-    <div ng-repeat="repo in options.details.repositories">
-        <div>Slug (owner/name) : <input ng-model="repo.slug"></div>
-        <!--<div>Name : <input ng-model="repo.name"></div>-->
-        <!--<div>Name : <input ng-model="repo.name"></div>-->
-        <button ng-click="options.details.repositories.splice(options.details.repositories.indexOf(repo),1)">Remove Repository</button>
+        </div>
     </div>
 
-    <input type="submit"/>
+    <div class="row">
+
+        <div class="card-panel col s3 teal lighten-1 badge  white-text left ">
+            <i class="mdi-action-settings left"></i>Repositories
+        </div>
+
+        <div class="col s5 offset-s1">
+            <div class="form-field" ng-repeat="repo in options.details.repositories">
+                <div class="label">Slug (owner/name)</div>
+                <div class="input">
+                    <input type="text" ng-model="repo.slug"/>
+                    <a class="waves-effect waves-teal btn-flat"
+                       ng-click="options.details.repositories.splice(options.details.repositories.indexOf(repo),1)">
+                        Remove Repository
+                    </a>
+
+                </div>
+                <!--<div>Name : <input ng-model="repo.name"></div>-->
+                <!--<div>Name : <input ng-model="repo.name"></div>-->
+
+            </div>
+            <div class="col offset-s3">
+                <a class="btn-floating btn-large waves-effect waves-light teal " ng-click="options.addRepository()">
+                    <i class="mdi-content-add"></i>
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="row">
+        <div class="col offset-s3 s6">
+            <button class="btn waves-effect waves-light right" type="submit" name="action">Submit
+                <i class="mdi-content-send right"></i>
+            </button>
+            <a class="btn waves-effect waves-light right" ng-click="options.reset()">Reset
+                <i class="mdi-action-settings-backup-restore right"></i>
+            </a>
+        </div>
+    </div>
 
 </form>
 
-<button ng-click="options.addRepository()">Add Repository</button>
-
+</div>
 
 <!-- build:js scripts/options_vendor.js -->
 <!-- bower:js -->
@@ -44,6 +112,7 @@
 <!-- endbuild -->
 
 <!-- build:js scripts/options.js -->
+<script src="bower_components/materialize/dist/js/materialize.js"></script>
 <script src="scripts/options.js"></script>
 <!-- endbuild -->
 </body>
