@@ -14,6 +14,7 @@ angular.module('myoptions').controller('MyOptionsCtrl',['$log', '$scope', '$time
     controller.details = { repositories : []};
     // Saves options to chrome.storage
     function save_options() {
+        controller.details.version = new Date().getTime();
         controller.statusThinking = true;
         try {
             $log.info('saving', controller.details);

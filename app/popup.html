@@ -16,24 +16,24 @@
     <div ng-controller="TravisCtrl">
     <div id="header" class="light-blue darken-4">
         Cloudify's Build Dashboard
-        <span>Updated at: {{ updatedAt }}</span>
+        <span>Updated at: {{ page.updatedAt }}</span>
     </div>
     <div id="wrapper">
         <span class="branch">master</span>
-        <div ng-repeat="d in data track by d.name" class="report {{ d.state }}">
+        <div ng-repeat="d in page.data track by d.name" class="report {{ d.state }}">
             <a href='{{d.travisBuildLink}}'>{{ d.displayName }}</a>
             <div>{{ d.customText }}</div>
         </div>
     </div>
     <div id="builds">
         <span class="branch">build</span>
-        <div ng-repeat="d in builds track by d.name" class="report {{ d.state }}">
+        <div ng-repeat="d in page.builds track by d.name" class="report {{ d.state }}">
             <a href='{{d.travisBuildLink}}'>{{ d.displayName }}</a>
             <div>{{ d.customText }}</div>
         </div>
     </div>
     <div id="disabled">
-        <div ng-repeat="repo in disabled track by repo.name" class="disabled report">
+        <div ng-repeat="repo in page.disabled track by repo.name" class="disabled report">
             {{ repo.displayName }}
         </div>
     </div>
