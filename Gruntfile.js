@@ -311,7 +311,7 @@ module.exports = function (grunt) {
                 options: {
                     archive: function () {
                         var manifest = grunt.file.readJSON('app/manifest.json');
-                        return 'package/my-first-chrome-extension-' + manifest.version + '.zip';
+                        return 'package/cloudify-build-status-extension-' + manifest.version + '.zip';
                     }
                 },
                 files: [{
