@@ -17,7 +17,7 @@ function Config( defaults ){
  * </pre>
  *
  *
- * @param callback
+ * @param callback - function( {boolean} changed )
  */
 Config.prototype.restore = function( callback ) {
     var me = this;
@@ -33,9 +33,9 @@ Config.prototype.restore = function( callback ) {
         console.log('options loaded', _options, me.options );
         if ( !me.options.version || _options.version !== me.options.version ){
             me.options = _options;
-            callback();
+            callback(true);
         }else{
-            callback();
+            callback(false);
         }
     }
 

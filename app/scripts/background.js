@@ -212,9 +212,11 @@ Background.prototype.updateData = function(){
     console.log('updating data');
     var me = this;
     // read configuration
-    this.config.restore(function(){
+    this.config.restore(function( changed ){
         console.log('config restored', me.config.options);
-        me.initRepos( );
+        if ( changed ) {
+            me.initRepos();
+        }
 
         console.log('repos initialized');
         _.each(me.repos, me.loadStatusAndRefresh());

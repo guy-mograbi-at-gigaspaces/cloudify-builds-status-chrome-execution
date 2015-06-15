@@ -27,7 +27,7 @@
         <div build-status="{{d.state}}" data="d" ng-repeat="d in page.builds track by d.slug"></div>
     </div>
     <div id="disabled">
-        <div build-status="disabled" data="d" ng-repeat="repo in page.disabled track by repo.slug"></div>
+        <div build-status="disabled" data="d" ng-repeat="d in page.disabled track by d.slug"></div>
     </div>
 </div>
     <!-- build:js scripts/vendor.js -->
