@@ -23,4 +23,4 @@ Roadmap
 
  - ~~Display failing tests directly from the icon with a notification~~
  - ~~Come with preset for repositories~~
- - Add support for private repositories
+ - ~~Add support for private repositories~~
