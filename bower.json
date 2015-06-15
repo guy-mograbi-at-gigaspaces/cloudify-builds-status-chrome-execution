@@ -7,5 +7,8 @@
     "jquery": "~2.1.4",
     "materialize": "~0.96.1"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "resolutions": {
+    "angular": "~1.4.0"
+  }
 }

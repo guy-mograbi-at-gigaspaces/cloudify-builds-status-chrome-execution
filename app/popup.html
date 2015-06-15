@@ -20,22 +20,14 @@
     </div>
     <div id="wrapper">
         <span class="branch">master</span>
-        <div ng-repeat="d in page.data track by d.name" class="report {{ d.state }}">
-            <a href='{{d.travisBuildLink}}'>{{ d.displayName }}</a>
-            <div>{{ d.customText }}</div>
-        </div>
+        <div build-status="{{d.state}}" data="d" ng-repeat="d in page.data track by d.slug"></div>
     </div>
     <div id="builds">
         <span class="branch">build</span>
-        <div ng-repeat="d in page.builds track by d.name" class="report {{ d.state }}">
-            <a href='{{d.travisBuildLink}}'>{{ d.displayName }}</a>
-            <div>{{ d.customText }}</div>
-        </div>
+        <div build-status="{{d.state}}" data="d" ng-repeat="d in page.builds track by d.slug"></div>
     </div>
     <div id="disabled">
-        <div ng-repeat="repo in page.disabled track by repo.name" class="disabled report">
-            {{ repo.displayName }}
-        </div>
+        <div build-status="disabled" data="d" ng-repeat="repo in page.disabled track by repo.slug"></div>
     </div>
 </div>
     <!-- build:js scripts/vendor.js -->

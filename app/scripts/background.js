@@ -1,49 +1,41 @@
 'use strict';
 
-//console.log = function(msg){
-//    chrome.runtime.sendMessage({log: msg});
-//};
 
-//chrome.runtime.onInstalled.addListener(function (details) {
-//    console.log('previousVersion', details.previousVersion);
-//});
+function Background(){
+    var me = this;
+    this.config = new Config();
+    this.repos = [];
+    this.lastUpdate = null;
 
-
-//$scope.data = repos.sort(function(x, y) {
-//    return x.displayName.localeCompare(y.displayName);
-//});
-
-
-function loadStatus(repo, callback ) {
-    console.log('making request to: ' + repo.travisApiLink);
-    $.ajax(
-        {
-            url : repo.travisApiLink,
-            success:function(response) {
-                console.log('got response', response);
-                processRepoResponse(repo, { data:  response });
-                // missing feature - make refresh faster on repository that is currently running
-                callback();
-            },
-            error: function(){
-                console.log('failed loading', repo.name, arguments);
+    try{
+        chrome.runtime.onMessage.addListener(
+            function (request/*, sender, sendResponse*/) {
+                if ( request.msg === 'update_please'){
+                    me.sendUpdate(null);
+                }
             }
-        }
-    );
+        );
+    }catch(e){}
 }
 
+Background.prototype.loadStatus = function(repo, callback){
+    var me = this;
+    function success( response ){
+        console.log('got response', response);
+        me.processRepoResponse(repo, { data:  response });
+        // missing feature - make refresh faster on repository that is currently running
+        callback();
+    }
 
-/**
- *
- * @returns {string} timestamp
- */
-function getCurrentTime() {
-    var date = new Date();
-    var options = {
-        hour12: false
-    };
-    return date.toLocaleTimeString('en-us', options).substring(0, 5);
-}
+
+    function error(){
+        console.log('failed loading', repo.name, arguments);
+    }
+
+    new Travis(repo).builds(repo, success, error );
+
+};
+
 
 /**
  * @param {string} branchName
@@ -54,33 +46,6 @@ function isBuildBranch(branchName) {
     return regexp.exec(branchName) !== null && branchName.lastIndexOf('build') === -1;
 }
 
-/**
- *
- * @description
- * reads configuration from chrome extension db.
- *
- *
- * returns the following structure:
- *
- * <pre>
- * { repositories : [ { slug: 'cloudify-cosmo/cloudify-cli } , ...  ] }
- * </pre>
- *
- *
- * @param callback
- */
-
-function restore_options( callback ) {
-    try {
-        // Use default value color = 'red' and likesColor = true.
-        chrome.storage.sync.get(null, function (items) {
-            callback(items);
-        });
-    }catch(e){
-        //console.log('unable to restore',e);
-        callback( { 'repositories' : [{'slug' : 'cloudify-cosmo/cloudify-cli'}, {'slug' : 'cloudify-cosmo/cloudify-js' }] } );
-    }
-}
 
 /**
  * @description
@@ -89,37 +54,34 @@ function restore_options( callback ) {
  * @param repos
  * @returns {Array}
  */
-function initRepos( repos ){
-    return _.map(repos, function(repo) {
-        var name = repo.slug;
-        return {
-            'name': name,
-            'displayName': name.replace('cloudify-cosmo/', '').replace('nir0s/', ''),
-            'travisBuildLink': '',
-            'travisApiLink': 'https://api.travis-ci.org/repos/' + name + '/builds?event_type=push',
+Background.prototype.initRepos = function( ){
+    this.repos = _.map(this.config.options.repositories, function(repo) {
+
+        return _.merge({
+            'params' : { 'event_type' : 'push' },
+            'displayName': function(){ return repo.slug.split('/')[1]; }, // remove owner
             'state': 'uninitialized',
             'customText': '0s',
             'buildsPage': 0,
             'branch': 'master'
-        };
+        }, repo);
     });
-}
+};
 
 /**
  * @description
  * will prepare the data for popup
- * @param repos
  * @returns {{data: *, builds: *, disabled: *, updatedAt: string}}
  */
-function formatStatus( repos ){
+Background.prototype.formatStatus = function( ){
     return {
-        data: repos.filter(function(r) { return r.state !== 'not-running' && r.branch === 'master'; }),
-        builds:repos.filter(function(r) { return r.state !== 'not-running' && isBuildBranch(r.branch); }),
-        disabled: repos.filter(function(r) { return r.state === 'not-running'; }),
-        updatedAt: getCurrentTime()
+        data: this.repos.filter(function(r) { return r.state !== 'not-running' && r.branch === 'master'; }),
+        builds: this.repos.filter(function(r) { return r.state !== 'not-running' && isBuildBranch(r.branch); }),
+        disabled: this.repos.filter(function(r) { return r.state === 'not-running'; }),
+        updatedAt: new Date().toLocaleTimeString('en-us', { hour12: false}).substring(0, 5)
 
     };
-}
+};
 
 /**
  * @description
@@ -127,7 +89,7 @@ function formatStatus( repos ){
  * @param builds array of builds
  * @returns {*|Array.<T>} sorted array of builds
  */
-function sortBuilds( builds ){
+Background.prototype.sortBuilds = function( builds ){
     return builds.sort(function(x, y) {
         if (x.started_at === null) {
             return -1;
@@ -143,44 +105,19 @@ function sortBuilds( builds ){
         }
         return 0;
     });
-}
-
-/**
- * @description
- * processes data for a single repository
- * @param repo the repository to process
- * @param response
- * @returns {*}
- */
-function processRepoResponse(repo, response) {
-
-    // get only relevant builds
-    var builds = _.filter(response.data, function(build) { // get only builds from master/build branch, only those that were triggered by push and only those with some actual duration
-        return (isBuildBranch(build.branch) || build.branch === 'master') && build.event_type === 'push' && !(build.state === 'finished' && build.duration === 0);
-    });
-
-    // sort builds
-    builds = sortBuilds(builds);
-
-    if (builds.length === 0) { // handle travis pagination
-        if (response.data.length > 0 && repo.buildsPage < 10) {
-            repo.buildsPage += 1;
-            var lastNumber = response.data[response.data.length-1].number;
-            var paramConcatIndex = repo.travisApiLink.lastIndexOf('&');
-            if (paramConcatIndex !== -1) {
-                repo.travisApiLink = repo.travisApiLink.substring(0, paramConcatIndex);
-            }
-            repo.travisApiLink += '&after_number=' + lastNumber;
-            loadStatus(repo);
-        }
-        repo.state = 'not-running';
-        return null;
-    }
+};
 
 
-    var build = builds[0]; // get the latest build
+Background.prototype.getMoreBuilds = function( repo, response ){
+    repo.buildsPage += 1;
+    repo.params.after_number = response.data[response.data.length-1].number;
+    this.loadStatus(repo);
+};
+
+Background.prototype.updateRepo = function(build, repo){
+
     repo.branch = build.branch;
-    repo.travisBuildLink = 'https://travis-ci.org/' + repo.name + '/builds/' + build.id;
+    repo.travisBuildLink = new Travis( repo ).getBuildLink( repo, build );
     repo.state = build.state;
     if (build.state === 'created') {
         repo.customText = '0s';
@@ -192,7 +129,34 @@ function processRepoResponse(repo, response) {
         repo.state = 'failed';
     }
     return build;
-}
+};
+
+/**
+ * @description
+ * processes data for a single repository
+ * @param repo the repository to process
+ * @param response
+ * @returns {*}
+ */
+Background.prototype.processRepoResponse = function(repo, response) {
+
+    // get only relevant builds
+    var builds = _.filter(response.data, function(build) { // get only builds from master/build branch, only those that were triggered by push and only those with some actual duration
+        return (isBuildBranch(build.branch) || build.branch === 'master') && build.event_type === 'push' && !(build.state === 'finished' && build.duration === 0);
+    });
+
+    // sort builds
+    builds = this.sortBuilds(builds);
+
+    if (builds.length === 0) { // handle travis pagination
+        if (response.data.length > 0 && repo.buildsPage < 10) {
+            this.getMoreBuilds(repo, response);
+        }
+        repo.state = 'not-running';
+        return null;
+    }
+    return this.updateRepo(builds[0],repo);
+};
 
 
 /**
@@ -200,53 +164,43 @@ function processRepoResponse(repo, response) {
  * updating label text to number of failed builds
  * @param repos
  */
-function updateLabel( repos ){
-    var value = _.filter(repos, function(r){ return r.state === 'failed'}).length;
+Background.prototype.updateLabel = function( ){
+    var value = _.filter(this.repos, function(r){ return r.state === 'failed'; }).length;
     try{
         chrome.browserAction.setBadgeText({text: '' + value});
     }catch(e){ console.log('failed to update badge',e);}
-
-
     console.log('updating badge text to', value);
-}
+};
 
 /**
  * @description
  * will dispatch update to view
  * @param update
  */
-var lastUpdate = null;
-function sendUpdate( update ){
+Background.prototype.sendUpdate = function( update ){
     if ( update !== null ){
-        lastUpdate = update;
+        this.lastUpdate = update;
     }else{
-        update = lastUpdate;
+        update = this.lastUpdate;
     }
     try{
         chrome.runtime.sendMessage({status: update});
     }catch(e){}
 
     console.log('sent update',update);
-}
+};
 
-
-chrome.runtime.onMessage.addListener(
-    function (request/*, sender, sendResponse*/) {
-        if ( request.msg === 'update_please'){
-            sendUpdate(null);
-        }
-    }
-);
-
-
-function loadStatusAndRefresh(repos){
+Background.prototype.loadStatusAndRefresh = function(){
+    var me = this;
     return function(repo){
-        loadStatus(repo, function(){
-            updateLabel(repos);
-            sendUpdate(formatStatus(repos));
-        })
-    }
-}
+        console.log('loading ', repo.name );
+        me.loadStatus(repo, function(){
+            me.updateLabel();
+            me.sendUpdate(me.formatStatus());
+        });
+    };
+};
+
 
 /**
  * @description
@@ -254,26 +208,24 @@ function loadStatusAndRefresh(repos){
  * it will load configuration and get status for each repository
  *
  */
-var options = null;
-var repos = [];
-function updateData(){
+Background.prototype.updateData = function(){
     console.log('updating data');
+    var me = this;
     // read configuration
-    restore_options(function( _options ){
-        if ( options === null || _options.version !== options.version ){
-            options = _options;
-            repos = initRepos( options.repositories );
-        }
+    this.config.restore(function(){
+        console.log('config restored', me.config.options);
+        me.initRepos( );
 
-        _.each(repos, loadStatusAndRefresh(repos));
+        console.log('repos initialized');
+        _.each(me.repos, me.loadStatusAndRefresh());
     });
-
-    //chrome.browserAction.setBadgeText({text: '\'Bar'});
-}
+};
 
 
+Background.prototype.start = function(){
+    var me = this;
+    this.updateData();
+    setInterval(function(){me.updateData(); },30000);
+};
 
-// set interval on main function
-console.log('background loaded setting interval');
-setInterval(updateData,30000);
-updateData(); // initial run
+new Background().start();

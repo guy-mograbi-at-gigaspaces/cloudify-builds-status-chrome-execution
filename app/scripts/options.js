@@ -3,9 +3,9 @@
 console.log('\'Allo \'Allo! Option');
 
 
-angular.module('myoptions', []);
+angular.module('myoptions', ['ngDialog']);
 
-angular.module('myoptions').controller('MyOptionsCtrl',['$log', '$scope', '$timeout',function($log, $scope, $timeout){
+angular.module('myoptions').controller('MyOptionsCtrl',['$log', '$scope', '$timeout','$http','ngDialog',function($log, $scope, $timeout, $http, ngDialog){
 
     var controller = this;
     $log.info('loading my options ctrl');
@@ -33,11 +33,28 @@ angular.module('myoptions').controller('MyOptionsCtrl',['$log', '$scope', '$time
         }
     }
 
+    this.removeToken = function(repo){
+        if ( repo.token ){
+            delete repo.token;
+        }
+        repo.hasToken=false;
+    };
+
+    $scope.page = {};
     this.addRepository = function(){
         if ( !controller.details.repositories ){ // lazy upgrade model
             controller.details.repositories = [];
         }
         controller.details.repositories.push({});
+    };
+
+    this.generateToken = function(){
+        console.log('generating token', $scope.page );
+        $http.post('https://api.travis-ci.com/auth/github', { 'github_token' : $scope.page.githubToken }).then(function( result ){
+            $scope.page.travisToken = result.data.access_token;
+        }, function( result ){
+            console.log('unable to create token', result);
+        });
     };
 
 
@@ -98,6 +115,30 @@ angular.module('myoptions').controller('MyOptionsCtrl',['$log', '$scope', '$time
         }catch(e){}
         save_options();
 
+    };
+
+    controller.export = function () {
+        var newScope = $scope.$new();
+        newScope.details = controller.details;
+        ngDialog.open({ template: 'views/dialogs/export.html' , scope:  newScope });
+    };
+
+    controller.import = function(){
+
+        var newScope = $scope.$new();
+        newScope.import = function( data ){
+            newScope.errorMessage = null;
+            try {
+                controller.details = JSON.parse(data);
+                console.log('closing');
+                this.closeThisDialog('foo');
+            }catch(e){
+                console.log('unable to import',e);
+                newScope.errorMessage = 'invalid json';
+            }
+
+        };
+        ngDialog.open({template: 'views/dialogs/import.html', scope: newScope});
     };
 
 

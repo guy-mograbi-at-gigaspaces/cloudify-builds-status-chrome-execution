@@ -11,17 +11,27 @@
     }
 }
 
+.row .form-field:last-child{
+    border-bottom:1px solid #cecece;
+}
 
 .form-field{
     height: 64px;
     margin-bottom:8px;
-    border-bottom:1px solid #cecece;
+
+
 //    background-color: lightblue;
     .label {
-        margin-top:16px;
-//        background: lightpink;
-        height:16px;
+        label {
+            height: auto;
+            font-size:inherit;
+        }
+        margin-top: 16px;
+        //        background: lightpink;
+        height: 16px;
+        font-size: 14px;
         color: #9a9a9a;
+
     }
     .input{
         margin-top:8px;

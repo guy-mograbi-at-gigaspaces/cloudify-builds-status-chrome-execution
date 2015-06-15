@@ -3,13 +3,15 @@
 <head>
 
 
-    <!-- build:css styles/vendor.css -->
+    <!-- build:css styles/options_vendor.css -->
     <link href="bower_components/materialize/dist/css/materialize.css" rel="stylesheet"/>
     <link href="bower_components/angular/angular-csp.css" rel="stylesheet"/>
+    <link href="bower_components/ngDialog/css/ngDialog.css" rel="stylesheet"/>
+    <link href="bower_components/ngDialog/css/ngDialog-theme-default.css" rel="stylesheet"/>
     <!-- bower:css -->
     <!-- endbower -->
     <!-- endbuild -->
-    <!-- build:css({.tmp,app}) styles/main.css -->
+    <!-- build:css({.tmp,app}) styles/options_main.css -->
     <link href="styles/main.css" rel="stylesheet">
     <!-- endbuild -->
 </head>
@@ -43,7 +45,31 @@
 
 <form ng-submit="options.save($event)">
 
+
     <div class="row">
+        <div class="card-panel col s3 teal lighten-1 badge white-text left"><i class="mdi-action-lock-open left"></i>Generate Travis Token</div>
+        <div class="col s5 offset-s1" ng-show="!!page.travisToken">
+            <div class="label"><label>Token Generated</label></div>
+            <div class="teal lighten-4 center" ng-bind="page.travisToken">
+            </div>
+        </div>
+        <div class="col s5 offset-s1" ng-show="!page.travisToken">
+            <div class="form-field">
+                <div class="label">Github Token</div>
+                <div class="input">
+                    <input type="password" ng-model="page.githubToken"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" ng-show="!page.travisToken">
+        <div class="col s6 offset-s3">
+            <div class="generate-token-button right">
+                <a class="btn waves-effect waves-light right" ng-click="options.generateToken()"><i class="mdi-action-lock-open right"></i>Generate</a>
+            </div>
+        </div>
+    </div>
+    <!--<div class="row">
         <div class="card-panel col s3 teal lighten-1 badge white-text left"><i class="mdi-action-lock-open left"></i>Credentials</div>
 
         <div class="col s5 offset-s1">
@@ -55,7 +81,7 @@
             </div>
 
         </div>
-    </div>
+    </div>-->
 
     <div class="row">
 
@@ -64,20 +90,50 @@
         </div>
 
         <div class="col s5 offset-s1">
-            <div class="form-field" ng-repeat="repo in options.details.repositories">
-                <div class="label">Slug (owner/name)</div>
-                <div class="input">
-                    <input type="text" ng-model="repo.slug"/>
-                    <a class="waves-effect waves-teal btn-flat"
-                       ng-click="options.details.repositories.splice(options.details.repositories.indexOf(repo),1)">
-                        Remove Repository
-                    </a>
+            <span ng-repeat="repo in options.details.repositories">
+                <div class="form-field" >
+                    <div class="label"><label for="slug_{{$index}}">Slug (owner/name)</label></div>
+                    <div class="input" >
+                        <input type="text" ng-model="repo.slug" id="slug_{{$index}}"/>
+                        <span ng-show="!repo.hasToken">
+                            <a class="waves-effect waves-teal btn-flat"
+                               ng-click="options.details.repositories.splice(options.details.repositories.indexOf(repo),1)">
+                                Remove Repository
+                            </a>
+                            <a class="waves-effect waves-teal btn-flat"
+                               title="add token"
+                               ng-click="repo.hasToken=true">
+                                <i class="mdi-action-lock-open"></i>
+                            </a>
+                        </span>
+
+                    </div>
+
+                    <!--<div>Name : <input ng-model="repo.name"></div>-->
+                    <!--<div>Name : <input ng-model="repo.name"></div>-->
 
                 </div>
-                <!--<div>Name : <input ng-model="repo.name"></div>-->
-                <!--<div>Name : <input ng-model="repo.name"></div>-->
+                <div class="form-field" ng-show="repo.hasToken">
+                    <div class="label" title="travis token not the one from profile page!"><label for="token_{{$index}}">Travis API Token</label></div>
+                    <div class="input">
+                        <input type="password" ng-model="repo.token" id="token_{{$index}}"/>
+                        <a class="waves-effect waves-teal btn-flat"
+                           ng-click="options.details.repositories.splice(options.details.repositories.indexOf(repo),1)">
+                            Remove Repository
+                        </a>
+                        <a class="waves-effect waves-teal btn-flat"
+                           title="add token"
+                           ng-click="options.removeToken(repo)">
+                            <i class="mdi-action-lock-open"></i>
+                        </a>
 
-            </div>
+                    </div>
+
+                    <!--<div>Name : <input ng-model="repo.name"></div>-->
+                    <!--<div>Name : <input ng-model="repo.name"></div>-->
+
+                </div>
+            </span>
             <div class="col offset-s3">
                 <a class="btn-floating btn-large waves-effect waves-light teal " ng-click="options.addRepository()">
                     <i class="mdi-content-add"></i>
@@ -96,6 +152,12 @@
             <a class="btn waves-effect waves-light right" ng-click="options.reset()">Reset
                 <i class="mdi-action-settings-backup-restore right"></i>
             </a>
+            <a class="btn waves-effect waves-light right" ng-click="options.export()">Export
+                <i class="mdi-action-settings-backup-restore right"></i>
+            </a>
+            <a class="btn waves-effect waves-light right" ng-click="options.import()">Import
+                <i class="mdi-action-settings-backup-restore right"></i>
+            </a>
         </div>
     </div>
 
@@ -108,6 +170,7 @@
 <script src="bower_components/jquery/dist/jquery.js"></script>
 <script src="bower_components/lodash/lodash.js"></script>
 <script src="bower_components/angular/angular.js"></script>
+<script src="bower_components/ngDialog/js/ngDialog.min.js"></script>
 <!-- endbower -->
 <!-- endbuild -->
 

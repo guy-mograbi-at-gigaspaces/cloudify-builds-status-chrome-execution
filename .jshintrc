@@ -22,6 +22,9 @@
         "chrome": true,
         "crypto": true,
         "angular": true,
-        "_": true
+        "_": true,
+        "$": true,
+        "Travis" : true,
+        "Config" : true
     }
 }

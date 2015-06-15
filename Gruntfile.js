@@ -190,6 +190,7 @@ module.exports = function (grunt) {
             dist: {
                 files: [{
                     expand: true,
+
                     cwd: '<%= config.app %>/images',
                     src: '{,*/}*.svg',
                     dest: '<%= config.dist %>/images'
@@ -197,26 +198,27 @@ module.exports = function (grunt) {
             }
         },
 
-        htmlmin: {
-            dist: {
-                options: {
-                    // removeCommentsFromCDATA: true,
-                    // collapseWhitespace: true,
-                    // collapseBooleanAttributes: true,
-                    // removeAttributeQuotes: true,
-                    // removeRedundantAttributes: true,
-                    // useShortDoctype: true,
-                    // removeEmptyAttributes: true,
-                    // removeOptionalTags: true
-                },
-                files: [{
-                    expand: true,
-                    cwd: '<%= config.app %>',
-                    src: '*.html',
-                    dest: '<%= config.dist %>'
-                }]
-            }
-        },
+        //htmlmin: {
+        //    dist: {
+        //        options: {
+        //            // removeCommentsFromCDATA: true,
+        //            // collapseWhitespace: true,
+        //            // collapseBooleanAttributes: true,
+        //            // removeAttributeQuotes: true,
+        //            // removeRedundantAttributes: true,
+        //            // useShortDoctype: true,
+        //            // removeEmptyAttributes: true,
+        //            // removeOptionalTags: true
+        //        },
+        //        files: [{
+        //            expand: true,
+        //            dot: true,
+        //            cwd: '<%= config.app %>',
+        //            src: ['*.html','views/**/*.html'],
+        //            dest: '<%= config.dist %>'
+        //        }]
+        //    }
+        //},
 
         // By default, your `index.html`'s <!-- Usemin block --> will take care of
         // minification. These next options are pre-configured if you do not wish
@@ -257,7 +259,8 @@ module.exports = function (grunt) {
                         '{,*/}*.html',
                         'styles/{,*/}*.css',
                         'styles/fonts/{,*/}*.*',
-                        '_locales/{,*/}*.json'
+                        '_locales/{,*/}*.json',
+                        'views/**/*.*'
                     ]
                 },{
                     expand: true,
@@ -338,7 +341,7 @@ module.exports = function (grunt) {
         ]);
     });
 
-    grunt.registerTask('work',['watch:make']);
+    grunt.registerTask('work',['build','watch:make']);
 
     grunt.registerTask('test', [
         'connect:test',

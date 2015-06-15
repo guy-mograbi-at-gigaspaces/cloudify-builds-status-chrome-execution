@@ -1,9 +1,9 @@
 
 #options{
-    label{
-        height: 3rem;
-        line-height:3rem;
-        font-size:1.2rem;
+
+    .row{
+        min-height:100px;
+        margin-top:20px;
     }
     span.badge{
         position:relative;
