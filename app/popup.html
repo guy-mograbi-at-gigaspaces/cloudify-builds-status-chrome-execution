@@ -18,15 +18,16 @@
         Cloudify's Build Dashboard
         <span>Updated at: {{ page.updatedAt }}</span>
     </div>
-    <div id="wrapper">
+    <div id="wrapper" class="section">
         <span class="branch">master</span>
-        <div build-status="{{d.state}}" data="d" ng-repeat="d in page.data track by d.slug"></div>
+        <div build-status="{{d.state}}" data="d" title="{{d.state}}" ng-repeat="d in page.data track by d.slug"></div>
     </div>
-    <div id="builds">
+    <div id="builds" class="section">
         <span class="branch">build</span>
-        <div build-status="{{d.state}}" data="d" ng-repeat="d in page.builds track by d.slug"></div>
+        <div build-status="{{d.state}}" title="{{d.state}}" data="d" ng-repeat="d in page.builds track by d.slug"></div>
     </div>
-    <div id="disabled">
+    <div id="disabled" title="disabled" class="section">
+        <span title="disabled" class="branch">disabled</span>
         <div build-status="disabled" data="d" ng-repeat="d in page.disabled track by d.slug"></div>
     </div>
 </div>

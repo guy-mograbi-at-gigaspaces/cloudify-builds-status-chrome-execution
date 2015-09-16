@@ -4,7 +4,7 @@ $HEADER_BACKGROUND:#1565c0;
     backgound-color:$HEADER_BACKGROUND;
     color: #ffffff;
     margin: 6px;
-    width:500px;
+    width:553px;
 
     #header {
 
@@ -18,27 +18,31 @@ $HEADER_BACKGROUND:#1565c0;
         }
     }
     #wrapper {
+
+
+    }
+
+    .section {
+        padding-right:50px;
+
+        min-height:100px;
+        height:auto;
         margin-top: 10px;
         border-bottom: 2px solid $HEADER_BACKGROUND;
         padding-bottom: 10px;
-        min-height: 40px;
-    }
+        position:relative;
 
-
-    #builds {
-        padding-top: 10px;
-        padding-bottom: 10px;
-        border-bottom: 2px solid $HEADER_BACKGROUND;
-        min-height: 40px;
-    }
-
-    #disabled {
-        padding-top: 10px;
-        margin-top: 2px;
+        &>div{
+            display:inline-block;
+            line-height:20px;
+        }
 
     }
 
     span.branch {
+        position:absolute;
+        right:0;
+        top:10px;
         float: right;
         color: #ffffff;
         background: $HEADER_BACKGROUND;
@@ -47,20 +51,27 @@ $HEADER_BACKGROUND:#1565c0;
         padding: 3px;
         padding-bottom: 4px;
         padding-top: 4px;
-        width: 44px;
+        width: 54px;
         text-align: center;
         margin-top: 4px;
+        overflow: hidden;
+        text-overflow:ellipsis;
     }
 
     div.report {
         width: 243px;
+
         margin-left:3px;
         display: inline-block;
         font-size: 14px;
+        position:relative;
 //        background: #C0C0C0;
 //        border: 1px solid black;
         margin-top:-5px;
         line-height:0;
+        overflow-x:hidden;
+        white-space: nowrap;
+        text-overflow:ellipsis;
         a {
             line-height:16px;
             padding-left:10px;
@@ -70,27 +81,35 @@ $HEADER_BACKGROUND:#1565c0;
         }
         &.started {
             background:#ffeb3b ;
-            div {
+
+        }
+
+        &.created, &.started{
+            div{
                 visibility: visible;
+                position:absolute;
+                right:0;
+                left:auto;
+                display:inline-block;
+                top:50%;
+                transform: translate(-50%);
             }
         }
         &.created {
             background: #FF9900;
-            div {
-                font-size: 14px;
-                visibility: visible;
 
-            }
         }
         &.finished {
             background:#66bb6a ;
         }
         &.uninitialized {
             border: 1px dashed gray;
+
             background: #000000;
-            color: #ffffff;
+            color: white;
             a {
                 color: #666666;
+
             }
 
         }
@@ -102,7 +121,7 @@ $HEADER_BACKGROUND:#1565c0;
             position: relative;
             top: 10px;
             left: 12px;
-            visibility: hidden;
+            display:none;
         }
     }
 
@@ -114,8 +133,8 @@ $HEADER_BACKGROUND:#1565c0;
     div.disabled {
         background: #333333;
         color: #b3b3b3;
-        padding-top: 20px;
-        padding-bottom: 20px;
+        padding-top: 5px;
+        padding-bottom: 5px;
     }
 
     #status .status{ background-color:#CECECE; padding:10px; }

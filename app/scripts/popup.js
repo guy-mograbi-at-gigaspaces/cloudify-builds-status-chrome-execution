@@ -4,6 +4,10 @@ angular.module('myapp', []);
 
 angular.module('myapp').controller('TravisCtrl',['$http','$scope','$timeout','$log',function TravisCtrl($http, $scope/*, $timeout, $log*/) {
 
+    if ( localStorage.update){
+        $scope.page = JSON.parse(localStorage.update).status;
+    }
+
     try {
         /**
          * expecting the following data
@@ -31,8 +35,12 @@ angular.module('myapp').controller('TravisCtrl',['$http','$scope','$timeout','$l
     try{
         chrome.runtime.sendMessage({msg: 'update_please'});
     }catch(e){
-        // mock data
-        $scope.page = {'data':[{'params':{'event_type':'push'},'state':'finished','customText':'0s','buildsPage':0,'branch':'master','slug':'cloudify-cosmo/cloudify-js','travisBuildLink':'https://travis-ci.org/cloudify-cosmo/cloudify-js/builds/66642058'}],'builds':[{'params':{'event_type':'push'},'state':'finished','customText':'0s','buildsPage':0,'branch':'3.3m1','slug':'cloudify-cosmo/cloudify-cli','travisBuildLink':'https://travis-ci.org/cloudify-cosmo/cloudify-cli/builds/66775600'}],'disabled':[],'updatedAt':'06:35'};
+
+        //else {
+        //    mock data
+            //$scope.page = { 'data': [{ 'params': {'event_type': 'push'}, 'state': 'finished', 'customText': '0s', 'buildsPage': 0, 'branch': 'master', 'slug': 'cloudify-cosmo/cloudify-js', 'travisBuildLink': 'https://travis-ci.org/cloudify-cosmo/cloudify-js/builds/66642058'}], 'builds': [{ 'params': {'event_type': 'push'}, 'state': 'finished', 'customText': '0s', 'buildsPage': 0, 'branch': '3.3m1', 'slug': 'cloudify-cosmo/cloudify-cli', 'travisBuildLink': 'https://travis-ci.org/cloudify-cosmo/cloudify-cli/builds/66775600'}], 'disabled': [], 'updatedAt': '06:35'};
+        //}
+
     }
 }]);
 

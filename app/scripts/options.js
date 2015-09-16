@@ -9,7 +9,7 @@ angular.module('myoptions').controller('MyOptionsCtrl',['$log', '$scope', '$time
 
     var controller = this;
     $log.info('loading my options ctrl');
-    $log.info('chrome storage is', chrome.storage);
+
 
     controller.details = { repositories : []};
     // Saves options to chrome.storage
@@ -18,17 +18,26 @@ angular.module('myoptions').controller('MyOptionsCtrl',['$log', '$scope', '$time
         controller.statusThinking = true;
         try {
             $log.info('saving', controller.details);
-            chrome.storage.sync.set(controller.details, function () {
-                // Update status to let user know options were saved.
 
-                controller.statusMessage = 'Options saved';
-                $scope.$apply();
-                $timeout(function () {
-                    controller.statusMessage = null;
-                    controller.statusThinking = false;
-                }, 1000);
-            });
+            if ( typeof(chrome) === 'undefined' || typeof(chrome.storage) === 'undefined' ){
+                localStorage.data = JSON.stringify(controller.details);
+            }else {
+                chrome.storage.sync.set(controller.details, function () {
+                    // Update status to let user know options were saved.
+
+                    controller.statusMessage = 'Options saved';
+                    $scope.$apply();
+                });
+            }
+
+            $timeout(function () {
+                controller.statusMessage = null;
+                controller.statusThinking = false;
+            }, 1000);
+
         }catch(e){
+
+
             $log.error('unable to save',e);
         }
     }
@@ -96,6 +105,14 @@ angular.module('myoptions').controller('MyOptionsCtrl',['$log', '$scope', '$time
 // Restores select box and checkbox state using the preferences
 // stored in chrome.storage.
     function restore_options() {
+
+        if ( typeof(chrome) === 'undefined' || typeof(chrome.storage) === 'undefined'){
+            try {
+                controller.details = JSON.parse(localStorage.data);
+            }catch(e){}
+            return;
+        }
+
         try {
             // Use default value color = 'red' and likesColor = true.
             chrome.storage.sync.get(null, function (items) {

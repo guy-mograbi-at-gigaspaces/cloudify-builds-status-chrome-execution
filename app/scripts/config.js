@@ -44,6 +44,10 @@ Config.prototype.restore = function( callback ) {
         chrome.storage.sync.get(null, success);
     }catch(e){
 
+        if ( !chrome || !chrome.storage){
+            success(JSON.parse(localStorage.data));
+            return;
+        }
         //console.log('unable to restore',e);
         success( { 'repositories' : [
             {'slug' : 'cloudify-cosmo/cloudify-cli'},

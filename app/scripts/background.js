@@ -183,8 +183,17 @@ Background.prototype.sendUpdate = function( update ){
     }else{
         update = this.lastUpdate;
     }
+
     try{
-        chrome.runtime.sendMessage({status: update});
+        localStorage.update = JSON.stringify({status:update});
+    }catch(e){}
+
+    try{
+        if ( chrome.runtime ) {
+            chrome.runtime.sendMessage({status: update});
+        }else{
+
+        }
     }catch(e){}
 
     console.log('sent update',update);
