@@ -10,11 +10,9 @@ How to install
 
 in order to install the plugin you need to do the following: 
  - Download the release zip. [download latest](https://github.com/guy-mograbi-at-gigaspaces/cloudify-builds-status-chrome-execution/releases/download/v0.0.0-beta/cloudify-build-status-extension-0.0.262.zip)
- - Extract the zip file
  - Click on the settings button 
  - choose `more-tools --> extension`
- - click on `load unpacked extension`
- - click on the extracted directory
+ - drang and drop the zip file on that page
 
 
 
